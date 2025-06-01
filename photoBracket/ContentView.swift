@@ -5,44 +5,34 @@
 //  Created by Kaleb Davis on 5/21/25.
 //
 
-import SwiftUI
+
 import PhotosUI
+import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var pickerVM = PhotoPickerViewModel()
-    @State private var showPhotoPicker = false
+    @StateObject private var viewModel = TournamentViewModel()
     
     var body: some View {
-        VStack {
-            Text("Photo Bracket!")
-                .font(.largeTitle)
-                .bold()
-                .padding(.top, 100)
-            Button(action: {
-                showPhotoPicker = true
-                print("starting new bracket")
-            }) {
-                Text("Start New Bracket")
-                    .font(.headline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .padding(.horizontal, 40)
+        NavigationView {
+            VStack(spacing: 20) {
+                switch viewModel.gameState {
+                case .start:
+                    StartView(viewModel: viewModel)
+                case .playing:
+                    MatchupView(viewModel: viewModel)
+                case .finished:
+                    WinnerView(viewModel: viewModel)
+                }
             }
-            Spacer()
+            .padding()
         }
-        .photosPicker(isPresented: $showPhotoPicker,
-                      selection: $pickerVM.selectedItems,
-                      matching: .images)
-        .onChange(of: pickerVM.selectedItems) { oldItems, newItems in
-            pickerVM.loadImages(from: newItems)
-        }
-                
+        .photosPicker(isPresented: $viewModel.showingPhotoPicker,
+                     selection: Binding<[PhotosPickerItem]>(
+                        get: { [] },
+                        set: { items in
+                            viewModel.loadPhotos(from: items)
+                        }
+                     ),
+                     matching: .images)
     }
 }
-//
-//#Preview {
-//    ContentView()
-//}
