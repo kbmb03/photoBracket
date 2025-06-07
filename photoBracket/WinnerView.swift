@@ -19,7 +19,7 @@ struct WinnerView: View {
                 .foregroundColor(.green)
             
             if let winner = viewModel.tournament?.winner {
-                WinnerPhotoView(image: winner)
+                WinnerPhotoView(image: winner.image)
             }
             
             Button("Start New Tournament") {

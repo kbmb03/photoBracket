@@ -34,18 +34,19 @@ class TournamentViewModel: ObservableObject {
     
     func loadPhotos(from items: [PhotosPickerItem]) {
         isLoading = true
-        var loadedPhotos: [UIImage] = []
+        var loadedPhotos: [PhotoItem] = []
         
         let group = DispatchGroup()
         
         for item in items {
             group.enter()
+            let id = item.itemIdentifier
             item.loadTransferable(type: Data.self) { result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let data):
                         if let data = data, let image = UIImage(data: data) {
-                            loadedPhotos.append(image)
+                            loadedPhotos.append(PhotoItem(image: image, assetID: id))
                         }
                     case .failure(let error):
                         print("Error loading photo: \(error)")
@@ -67,7 +68,7 @@ class TournamentViewModel: ObservableObject {
         }
     }
     
-    func selectWinner(_ winner: UIImage) {
+    func selectWinner(_ winner: PhotoItem) {
         tournament?.selectWinner(winner)
     }
     
@@ -75,7 +76,7 @@ class TournamentViewModel: ObservableObject {
         tournament = nil
     }
     
-    private func startTournament(with photos: [UIImage]) {
+    private func startTournament(with photos: [PhotoItem]) {
         tournament = Tournament(photos: photos)
     }
 }
