@@ -12,13 +12,14 @@ struct WinnerView: View {
     @ObservedObject var viewModel: TournamentViewModel
     
     var body: some View {
+        let winner = viewModel.tournament?.winner
         VStack(spacing: 30) {
             Text("🏆 WINNER! 🏆")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.green)
             
-            if let winner = viewModel.tournament?.winner {
+            if let winner = winner {
                 WinnerPhotoView(image: winner.image)
             }
             
@@ -29,6 +30,19 @@ struct WinnerView: View {
             .controlSize(.large)
             .tint(.green)
             
+            if let winner = winner, let winnerID = winner.assetID {
+                Button {
+                    print("Added to favorites \(winnerID)")
+                } label: {
+                    HStack {
+                        Text("Add Photo to Favorites")
+                        Image(systemName: "heart.fill")
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .tint(.blue)
+            }
             Spacer()
         }
     }
