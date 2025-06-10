@@ -32,7 +32,7 @@ struct WinnerView: View {
             
             if let winner = winner, let winnerID = winner.assetID {
                 Button {
-                    print("Added to favorites \(winnerID)")
+                    viewModel.addToFavorites(assetID: winnerID)
                 } label: {
                     HStack {
                         Text("Add Photo to Favorites")

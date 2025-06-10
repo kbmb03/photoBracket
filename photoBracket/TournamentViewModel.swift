@@ -68,6 +68,25 @@ class TournamentViewModel: ObservableObject {
         }
     }
     
+    func addToFavorites(assetID: String) {
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+            guard status == .authorized || status == .limited else {
+                return
+            }
+            let assets = PHAsset.fetchAssets(withLocalIdentifiers: [assetID], options: nil)
+            guard let asset = assets.firstObject else {
+                return
+            }
+            let favAlbum = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
+                .firstObject
+            guard let album = favAlbum else { return }
+            PHPhotoLibrary.shared().performChanges {
+                PHAssetCollectionChangeRequest(for: album)?
+                    .addAssets([asset] as NSArray)
+            }
+        }
+    }
+    
     func selectWinner(_ winner: PhotoItem) {
         tournament?.selectWinner(winner)
     }

@@ -10,6 +10,7 @@ import PhotosUI
 import SwiftUI
 
 struct ContentView: View {
+    @State private var pickerItems: [PhotosPickerItem] = []
     @StateObject private var viewModel = TournamentViewModel()
     
     var body: some View {
@@ -27,12 +28,12 @@ struct ContentView: View {
             .padding()
         }
         .photosPicker(isPresented: $viewModel.showingPhotoPicker,
-                     selection: Binding<[PhotosPickerItem]>(
-                        get: { [] },
-                        set: { items in
-                            viewModel.loadPhotos(from: items)
-                        }
-                     ),
-                     matching: .images)
+                      selection: $pickerItems,
+                      matching: .images,
+                      photoLibrary: .shared())
+        .onChange(of: pickerItems) { _oldItems, item in
+            viewModel.loadPhotos(from: item)
+            pickerItems = []
+        }
     }
 }
